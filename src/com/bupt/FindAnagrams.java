@@ -1,33 +1,43 @@
 package com.bupt;
 
 
+import org.junit.Test;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
+
+
 
 public class FindAnagrams {
+
+    @Test
+    public void test() {
+        String s = "cbaebabacd";
+        String p = "abc";
+        List<Integer> anagrams = findAnagrams(s, p);
+        System.out.println("has done");
+    }
+
     public List<Integer> findAnagrams(String s, String p) {
 
-        Map<Character, Integer> table = new HashMap<>();
+        int[] table = new int[26];
         List<Integer> ret = new ArrayList<>();
         int m = s.length(), n = p.length();
         int count = n;
-
         for(int i = 0; i < n; i++) {
             char ch = p.charAt(i);
-            table.put(ch, table.getOrDefault(ch, 0) + 1);
+            table[ch - 'a']++;
         }
 
         int start = 0, end = 0;
         while(end < m) {
-            char ch = s.charAt(end);
-            if(table.containsKey(ch)) {
-                table.put(ch, table.get(ch) + 1);
-                count--;
-            }
+            if(table[s.charAt(end++) - 'a']-- > 0) count--;
+            if(count == 0) ret.add(start);
+            if(end - start >= n && table[s.charAt(start++) - 'a']++ >= 0) count++;
         }
-        return null;
+        return ret;
     }
 
 

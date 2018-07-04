@@ -3,6 +3,8 @@ package com.bupt;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public class MostCommonWord {
@@ -11,9 +13,12 @@ public class MostCommonWord {
     public void test() {
         String s = "Bob hit a ball, the hit BALL flew far after it was hit.";
 
-        String word = mostCommonWord(s, new String[]{"hit"});
+//        String word = mostCommonWord(s, new String[]{"hit"});
+//        String word = mostCommonWordByStream(s, new String[]{"hit"});
+        String a = "a.";
+        String[] str = a.replaceAll("\\pP", "").split(" ");
 
-        System.out.println(word);
+//        System.out.println(word);
     }
 
 
@@ -32,4 +37,21 @@ public class MostCommonWord {
 
         return Collections.max(map.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
+
+
+    public String mostCommonWordByStream(String paragraph, String[] banned) {
+
+        Set<String> set = new HashSet<>(Arrays.asList(banned));
+        return Arrays.asList(
+                paragraph.replaceAll("\\pP", "")
+                        .toLowerCase()
+                        .split(" "))
+                .stream()
+                .filter(x -> !set.contains(x))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .collect(Collectors.maxBy(Map.Entry.comparingByValue())).get().getKey();
+    }
+
 }

@@ -34,13 +34,13 @@ public class TopKFrequent {
                 .boxed()
                 .collect(
                         Collectors.groupingBy(
-                                Function.identity(), Collectors.collectingAndThen(Collectors.reducing(Integer::sum), Optional::get)
+                                Function.identity(), Collectors.reducing(0, x -> 1, Integer::sum)
                         )
                 )
                 .entrySet()
                 .stream()
-                .forEach(x -> arry[x.getValue()].add(x));
-        for(int i = arry.length - 1; i > nums.length - k && ret.size() < k; i--) {
+                .forEach(x -> arry[x.getValue()].add(x.getKey()));
+        for(int i = arry.length - 1; ret.size() < k; i--) {
             if(arry[i] != null)
                 ret.addAll(arry[i]);
         }

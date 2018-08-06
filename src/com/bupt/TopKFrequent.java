@@ -5,25 +5,23 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.function.Function;
-//import static java.util.stream.Collectors.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TopKFrequent {
 
     @Test
     public void test() {
         int[] nums = {1,1,1,2,2,3};
-        List<Integer> list = topKFrequent(nums, 2);
+        List<Integer> list = topKFrequentForInteger(nums, 2);
         System.out.println(list.size());
         list.stream().forEach(System.out::println);
     }
 
 
 
-    public List<Integer> topKFrequent(int[] nums, int k) {
+    public List<Integer> topKFrequentForInteger(int[] nums, int k) {
 
         List<Integer> ret = new ArrayList<>();
         ArrayList[] arry = new ArrayList[nums.length + 1];
@@ -46,5 +44,29 @@ public class TopKFrequent {
         }
 
         return ret;
+    }
+
+    public List<String> topKFrequentForString(String[] words, int k) {
+
+        List<String> ret = new ArrayList<>();
+        PriorityQueue[] bucket = new PriorityQueue[words.length + 1];
+        for(int i = 0; i < bucket.length; i++) {
+            bucket[i] = new PriorityQueue();
+        }
+        Arrays.asList(words)
+                .stream()
+                .collect(
+                        Collectors.groupingBy(Function.identity(), Collectors.reducing(0, x -> 1, Integer::sum))
+                )
+                .entrySet()
+                .stream()
+                .forEach(x -> bucket[x.getValue()].add(x.getKey()));
+        for(int i = bucket.length - 1; ret.size() < k; i--) {
+            while(ret.size() < k && bucket[i].size() > 0) {
+                ret.add((String)bucket[i].poll());
+            }
+        }
+        return ret;
+
     }
 }
